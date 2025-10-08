@@ -1,4 +1,3 @@
-
 # A more efficient workflow that scans multiple languages in a single job.
 name: "CodeQL"
 
