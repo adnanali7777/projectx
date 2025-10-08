@@ -48,10 +48,15 @@ def get_user():
 @app.route('/ping')
 def ping_host():
     host = request.args.get('host')
-
-    # ❌ Vulnerable: subprocess with shell=True
-    result = subprocess.check_output(f"ping -c 1 {host}", shell=True)
-    return f"<pre>{escape(result.decode())}</pre>"
+    import re
+    # ✅ Safe: Only allow valid hostnames (letters, digits, -, .) or IPv4 addresses
+    if not host or not re.match(r'^[a-zA-Z0-9\-\.]+$', host):
+        return "<h1>Invalid host.</h1>", 400
+    try:
+        result = subprocess.check_output(['ping', '-c', '1', host], timeout=5)
+        return f"<pre>{escape(result.decode())}</pre>"
+    except Exception as e:
+        return "<h1>Ping failed.</h1>", 500
 
 if __name__ == '__main__':
     app.run(debug=True)
