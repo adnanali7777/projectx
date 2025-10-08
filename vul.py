@@ -34,9 +34,9 @@ def get_user():
     conn = sqlite3.connect('example.db')
     c = conn.cursor()
 
-    # ❌ Vulnerable: f-string directly into SQL
-    query = f"SELECT username FROM users WHERE username = '{username}'"
-    c.execute(query)
+    # ✅ Safe: Use a parameterized SQL query
+    query = "SELECT username FROM users WHERE username = ?"
+    c.execute(query, (username,))
     user = c.fetchone()
     conn.close()
 
